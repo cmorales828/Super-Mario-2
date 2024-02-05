@@ -39,9 +39,7 @@ while True:
     for i in objects:
         i.render(f_screen)
         
-    # update display
-        
-    # psuedosurface stuff (displaying at 2x size)
+    # psuedosurface stuff (displaying at zoomed size)
     f_screen = pygame.transform.scale_by(f_screen, globalvar.ZOOM)
     screen.blit(f_screen, (0, 0))
     f_screen = pygame.transform.scale_by(f_screen, 1 / globalvar.ZOOM)
