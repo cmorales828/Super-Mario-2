@@ -7,6 +7,7 @@ Installation:
 
 ```sh
 pip install pygame
+pip install numpy
 ```
 
 Run with VSCode, F5 (launch.json already set up)

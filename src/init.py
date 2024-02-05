@@ -21,12 +21,12 @@ while True:
 
     # handle updating objects
     for i in objects:
-        i.update_self()
+        i.update()
 
     # clear screen
     screen.fill((0, 0, 0))
     for i in objects:
-        i.draw_self(screen)
+        i.render(screen)
         
     # update display
     pygame.display.update()
