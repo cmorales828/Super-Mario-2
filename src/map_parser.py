@@ -3,6 +3,22 @@ import math
 import objects.gameobject as gameobject
 import globalvar
 
+class Tileset:
+    def __init__(self, file_name):
+        self.image = pygame.image.load(globalvar.GLOBAL_PATH + file_name)
+        self.rect = self.image.get_rect()
+
+        # load tileset
+        self.tiles = []
+        for x in range(self.rect.width // globalvar.TILE_SIZE):
+            for y in range(self.rect.height // globalvar.TILE_SIZE):
+                temp_size = (globalvar.TILE_SIZE, globalvar.TILE_SIZE)
+                tile = pygame.Surface(temp_size)
+                tile.blit(self.image, (0, 0), (x * globalvar.TILE_SIZE, y * globalvar.TILE_SIZE, *temp_size))
+                self.tiles.append(tile)
+        print(self.tiles)
+
+
 class Tilemap(gameobject.GameObject): 
     def __init__(self, x=0, y=0, tilemap_width=16, tilemap_height=16):
         self.x = x
@@ -31,8 +47,7 @@ class Map(gameobject.GameObject):
             tilemap_array.append(temp_array_height)
         
         self.tilemaps = []
-        # temporary tile
-        temp_tile = pygame.image.load(globalvar.GLOBAL_PATH + "tile/tile1.png")
+        tileset = Tileset("tile/tile1.png")
 
         size_limit = 16
         size_i = 0
@@ -45,7 +60,14 @@ class Map(gameobject.GameObject):
             for j in range(tilemap_height):
                 cur_tile = tilemap_array[i][j]
                 if not "0" in cur_tile and not " " in cur_tile:
-                    cur_tilemap.surface.blit(temp_tile, (size_i * globalvar.TILE_SIZE, j * globalvar.TILE_SIZE))
+                    index = 0
+                    try:
+                        index = int(cur_tile) - 1
+                        cur_tilemap.surface.blit(tileset.tiles[index], (size_i * globalvar.TILE_SIZE, j * globalvar.TILE_SIZE))
+                    except ValueError:
+                        # create object instead if not value
+                        continue
+                    
             size_i += 1
             i += 1
             if size_i > size_limit - 1 or i == tilemap_width - 1: 
