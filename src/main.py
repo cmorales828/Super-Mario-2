@@ -1,5 +1,6 @@
 import pygame
 import sys
+import math
 
 import globalvar
 import map_parser
@@ -17,8 +18,10 @@ clock = pygame.time.Clock()
 fps = 60
 
 map = map_parser.Map()
-game_camera = camera.Camera(64, 64)
-objects = [mario.Mario(64, 64), map]
+mario_object = mario.Mario(64, 64)
+game_camera = camera.Camera(0, 0)
+game_camera.following = mario_object
+objects = [map, mario_object]
 
 while True:
     for event in pygame.event.get():
@@ -30,12 +33,12 @@ while True:
     for i in objects:
         i.update()
     # update camera separately
-    game_camera.update()
+    game_camera.update(f_screen)
 
     # clear screen
     f_screen.fill((0, 0, 0))
     for i in objects:
-        i.render(f_screen)
+        i.render(f_screen, game_camera)
         
     # psuedosurface stuff (displaying at zoomed size)
     f_screen = pygame.transform.scale_by(f_screen, globalvar.ZOOM)
