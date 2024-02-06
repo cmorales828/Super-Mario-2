@@ -4,6 +4,7 @@ import math
 
 import globalvar
 import map_parser
+import objects.collideable as collideable
 
 import objects.camera as camera
 import objects.mario as mario

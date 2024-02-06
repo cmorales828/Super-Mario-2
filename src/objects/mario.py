@@ -1,9 +1,9 @@
-import objects.gameobject as gameobject
 import globalvar
 import pygame
+import objects.collideable as collideable
 
 # Mario Object
-class Mario(gameobject.GameObject):
+class Mario(collideable.Collideable):
     def __init__(self, x, y):
         super().__init__(x, y)
         # Define temp sprite
@@ -24,7 +24,7 @@ class Mario(gameobject.GameObject):
             self.y += 2
 
     def render(self, surface, camera):
-        super().render(surface, camera)
         surface.blit(self.sprite, (self.x - self.camera_x, self.y - self.camera_y))
+        super().render(surface, camera)
         return
     pass
