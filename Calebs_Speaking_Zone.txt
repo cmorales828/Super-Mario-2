@@ -1,3 +1,3 @@
-
-
 Should I start Working on a an enemy file or are the tilesets good?
+
+you can work on an enemy file, just keep in mind the format for it and how it works. if you want i can show you how to add objects but rn im working on the tiles
