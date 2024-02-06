@@ -14,8 +14,11 @@ As this project uses copyrighted material, it may not have a true and adequate l
 ---
 Installation:
 
+If you had previously installed pygame, uninstall it and install pygame-ce;
+The program will still work with pygame, but the main branch is being developed with -ce.
+
 ```sh
-pip install pygame
+pip install pygame-ce
 pip install numpy
 ```
 
