@@ -20,6 +20,7 @@ class Map(gameobject.GameObject):
 
         temp_array = f.read()
         tilemap_width = temp_array.find("\n")
+        print(tilemap_width)
         tilemap_height = len(temp_array.split("\n")) # probably a better way to do this
 
         tilemap_array = []
@@ -48,7 +49,7 @@ class Map(gameobject.GameObject):
                     cur_tilemap.surface.blit(temp_tile, (size_i * globalvar.TILE_SIZE, j * globalvar.TILE_SIZE))
             size_i += 1
             i += 1
-            if size_i > size_limit - 1: 
+            if size_i > size_limit - 1 or i == tilemap_width - 1: 
                 size_i = 0
                 self.tilemaps.append(cur_tilemap)
         print(self.tilemaps)
