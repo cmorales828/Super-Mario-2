@@ -16,18 +16,18 @@ class Tileset:
                 tile = pygame.Surface(temp_size)
                 tile.blit(self.image, (0, 0), (x * globalvar.TILE_SIZE, y * globalvar.TILE_SIZE, *temp_size))
                 self.tiles.append(tile)
-        print(self.tiles)
 
 
 class Tilemap(gameobject.GameObject): 
     def __init__(self, x=0, y=0, tilemap_width=16, tilemap_height=16):
         self.x = x
         self.y = y
+        self.collision_map = []
         self.surface = pygame.Surface(size=(globalvar.TILE_SIZE * tilemap_width, globalvar.TILE_SIZE * tilemap_height))
 
     def render(self, surface, camera):
         super().render(surface, camera)
-        surface.blit(self.surface, (math.floor(self.x - self.camera_x), math.floor(self.y - self.camera_y)))
+        surface.blit(self.surface, (math.floor(self.x) - self.camera_x, math.floor(self.y) - self.camera_y))
     pass
 
 class Map(gameobject.GameObject):
