@@ -1,4 +1,4 @@
-import gameobject
+import objects.gameobject as gameobject
 import globalvar
 import pygame
 
@@ -9,6 +9,8 @@ class Mario(gameobject.GameObject):
         # Define temp sprite
         self.temp_sprite = globalvar.GLOBAL_PATH + "tile/tile1.png"
         self.sprite = pygame.image.load(self.temp_sprite)
+    def update(self):
+        super().update()
 
     def render(self, surface):
         surface.blit(self.sprite, (self.x, self.y))
