@@ -10,9 +10,7 @@ class Mario(collideable.Collideable):
         self.temp_sprite = globalvar.GLOBAL_PATH + "tile/tile1.png"
         self.sprite = pygame.image.load(self.temp_sprite)
 
-    def update(self):
-        super().update()
-
+    def update(self, map, objects):
         keys = pygame.key.get_pressed()
         if keys[pygame.K_LEFT]:
             self.x -= 2
@@ -23,8 +21,9 @@ class Mario(collideable.Collideable):
         if keys[pygame.K_DOWN]:
             self.y += 2
 
+        super().update(map, objects)
+
     def render(self, surface, camera):
-        surface.blit(self.sprite, (self.x - self.camera_x, self.y - self.camera_y))
         super().render(surface, camera)
         return
     pass
