@@ -1,4 +1,4 @@
-import gameobject
+import objects.gameobject as gameobject
 import globalvar
 import pygame
 

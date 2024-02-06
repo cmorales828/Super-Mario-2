@@ -1,4 +1,4 @@
-import gameobject
+import objects.gameobject as gameobject
 
 class Camera(gameobject.GameObject):
     def __init__(self, x, y):

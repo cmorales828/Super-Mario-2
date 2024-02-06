@@ -1,5 +1,5 @@
 import numpy as np
-import gameobject
+import objects.gameobject as gameobject
 
 class Tilemap(gameobject.GameObject): 
     def __init__(self, texture_name="tile/tile1", size=(16, 16)):

@@ -2,9 +2,10 @@ import pygame
 import sys
 
 import globalvar
-import camera
 import map_parser
-import mario
+
+import objects.camera as camera
+import objects.mario as mario
 
 # Init pygame
 pygame.init()
