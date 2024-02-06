@@ -9,9 +9,9 @@ class Tilemap(gameobject.GameObject):
         self.y = y
         self.surface = pygame.Surface(size=(globalvar.TILE_SIZE * tilemap_width, globalvar.TILE_SIZE * tilemap_height))
 
-    def render(self, surface):
-        super().render(surface)
-        surface.blit(self.surface, (self.x, self.y))
+    def render(self, surface, camera):
+        super().render(surface, camera)
+        surface.blit(self.surface, (self.x - self.camera_x, self.y - self.camera_y))
     pass
 
 class Map(gameobject.GameObject):
@@ -20,7 +20,6 @@ class Map(gameobject.GameObject):
 
         temp_array = f.read()
         tilemap_width = temp_array.find("\n")
-        print(tilemap_width)
         tilemap_height = len(temp_array.split("\n")) # probably a better way to do this
 
         tilemap_array = []
@@ -57,8 +56,8 @@ class Map(gameobject.GameObject):
     def update(self):
         super().update()
 
-    def render(self, surf):
-        super().render(surf)
+    def render(self, surf, camera):
+        super().render(surf, camera)
         for i in self.tilemaps:
-            i.render(surf)
+            i.render(surf, camera)
     pass
