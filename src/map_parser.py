@@ -11,7 +11,7 @@ class Tilemap(gameobject.GameObject):
 
     def render(self, surface, camera):
         super().render(surface, camera)
-        surface.blit(self.surface, (self.x - self.camera_x, self.y - self.camera_y))
+        surface.blit(self.surface, (math.floor(self.x - self.camera_x), math.floor(self.y - self.camera_y)))
     pass
 
 class Map(gameobject.GameObject):
@@ -41,7 +41,7 @@ class Map(gameobject.GameObject):
         while i < tilemap_width:
             if size_i == 0:
                 cur_tilemap = Tilemap(i * globalvar.TILE_SIZE, 144, size_limit, tilemap_height)
-                print(cur_tilemap)
+                self.tilemaps.append(cur_tilemap)
             for j in range(tilemap_height):
                 cur_tile = tilemap_array[i][j]
                 if not "0" in cur_tile and not " " in cur_tile:
@@ -50,7 +50,6 @@ class Map(gameobject.GameObject):
             i += 1
             if size_i > size_limit - 1 or i == tilemap_width - 1: 
                 size_i = 0
-                self.tilemaps.append(cur_tilemap)
         print(self.tilemaps)
 
     def update(self):
