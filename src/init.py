@@ -1,10 +1,9 @@
 import pygame
 import sys
 
-import math
-
 import globalvar
-import gameobject
+import camera
+import map_parser
 import mario
 
 # Init pygame
@@ -16,9 +15,9 @@ pygame.display.set_caption("Cual Abogado")
 clock = pygame.time.Clock()
 fps = 60
 
-objects = []
-for i in range(16):
-    objects.append(mario.Mario(100 + i * 16, 100))
+map = map_parser.Map()
+game_camera = camera.Camera(64, 64)
+objects = [mario.Mario(64, 64), map]
 
 while True:
     for event in pygame.event.get():
@@ -28,11 +27,9 @@ while True:
 
     # handle updating objects
     for i in objects:
-        i.x += 1
-        if i.x > screen.get_width() // 2:
-            i.x -= (screen.get_width() // 2 + 16)
-        i.y = 100 + math.sin(i.x / 100 + (pygame.time.get_ticks() / 1000)) * (screen.get_height() // 8)
         i.update()
+    # update camera separately
+    game_camera.update()
 
     # clear screen
     f_screen.fill((0, 0, 0))
