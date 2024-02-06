@@ -44,8 +44,7 @@ class Map(gameobject.GameObject):
                 print(cur_tilemap)
             for j in range(tilemap_height):
                 cur_tile = tilemap_array[i][j]
-                if cur_tile != 0:
-                    print(cur_tile == 0)
+                if not "0" in cur_tile and not " " in cur_tile:
                     cur_tilemap.surface.blit(temp_tile, (size_i * globalvar.TILE_SIZE, j * globalvar.TILE_SIZE))
             size_i += 1
             i += 1
