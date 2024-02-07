@@ -42,7 +42,7 @@ while True:
     game_camera.update(f_screen)
 
     # clear screen
-    f_screen.fill((0, 0, 0))
+    f_screen.fill((148, 148, 255))
 
     # Render map below everything else
     map.render(f_screen, game_camera)

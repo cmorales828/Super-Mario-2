@@ -3,6 +3,8 @@ import math
 import objects.gameobject as gameobject
 import globalvar
 
+my_color = (255, 0, 255)
+
 # Class for tilesets, that contain all tile information
 class Tileset:
     def __init__(self, file_name, width = globalvar.TILE_SIZE, height = globalvar.TILE_SIZE):
@@ -10,11 +12,12 @@ class Tileset:
         self.rect = self.image.get_rect()
         # load tileset
         self.tiles = []
-        for x in range(self.rect.width // width):
-            for y in range(self.rect.height // height):
+        for y in range(self.rect.height // height):
+            for x in range(self.rect.width // width):
                 temp_size = (width, height)
                 tile = pygame.Surface(temp_size)
-                tile.set_colorkey((0, 0, 0))
+                tile.fill(my_color)
+                tile.set_colorkey(my_color)
                 tile.blit(self.image, (0, 0), (x * width, y * height, *temp_size))
                 self.tiles.append(tile)
     
@@ -27,6 +30,8 @@ class Tilemap(gameobject.GameObject):
         self.x = x
         self.y = y
         self.surface = pygame.Surface(size=(globalvar.TILE_SIZE * tilemap_width, globalvar.TILE_SIZE * tilemap_height))
+        self.surface.fill(my_color)
+        self.surface.set_colorkey(my_color)
         # get current rectangle for total tilemap collision
         self.collision_map = []
         self.rect = self.surface.get_rect()
