@@ -34,7 +34,7 @@ class Tilemap(gameobject.GameObject):
 
     def render(self, surface, camera):
         super().render(surface, camera)
-        surface.blit(self.surface, (math.floor(self.x) - self.camera_x, math.floor(self.y) - self.camera_y))
+        surface.blit(self.surface, (math.floor(self.x - self.camera_x), math.floor(self.y - self.camera_y)))
         # for i in self.collision_map:
         #     pygame.draw.rect(surface, (255, 255, 255), i)
     pass

@@ -46,13 +46,12 @@ class Mario(collideable.Collideable):
         super().update(map, objects)
 
         # animation control
-        if self.ground:
-            if abs(self.vel_x) > self.acc:
-                self.image_index += 0.1
-                if self.image_index > 3:
-                    self.image_index -= 3
-            else:
-                self.image_index = 0
+        if abs(move) > 0:
+            self.image_index += 0.1
+            if self.image_index > 4:
+                self.image_index -= 3
+        else:
+            self.image_index = 0
 
     def render(self, surface, camera):
         super().render(surface, camera)
