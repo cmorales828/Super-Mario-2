@@ -9,6 +9,10 @@ class Collideable(gameobject.GameObject):
         # collision values
         self.gravity = 0
         self.ground = False
+
+        self.offset_x = 0
+        self.offset_y = 0
+        
         self.vel_x = 0
         self.vel_y = 0
         self.dir = 1
@@ -22,7 +26,7 @@ class Collideable(gameobject.GameObject):
         self.draw = False
 
     def update_center(self):
-        self.rect.center = (self.x, self.y)
+        self.rect.center = (self.x + self.offset_x, self.y + self.offset_y)
 
     def physics_update(self):
         self.prev_x = self.x
@@ -31,6 +35,8 @@ class Collideable(gameobject.GameObject):
         if not self.ground:
             self.vel_y += self.gravity
         # apply physics speeds
+        self.vel_y = min(self.vel_y, 4)
+
         self.x += self.vel_x
         self.y += self.vel_y
 
@@ -91,7 +97,6 @@ class Collideable(gameobject.GameObject):
                             self.update_center()
                 self.y += change_y
                 self.update_center()
-        print(grounded)
         self.ground = grounded
 
     def render(self, surface, camera):
