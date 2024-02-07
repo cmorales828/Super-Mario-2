@@ -2,6 +2,7 @@ import objects.gameobject as gameobject
 import pygame
 import math
 import globalvar
+
 class Collideable(gameobject.GameObject):
     def __init__(self, x, y):
         super().__init__(x, y)
@@ -26,44 +27,72 @@ class Collideable(gameobject.GameObject):
     def physics_update(self):
         self.prev_x = self.x
         self.prev_y = self.y
+ 
         if not self.ground:
             self.vel_y += self.gravity
-    
         # apply physics speeds
         self.x += self.vel_x
-        self.y += self.vel_y    
+        self.y += self.vel_y
 
     def update(self, map, objects):
         super().update()
-        
         self.update_center()
+
         # find the sector (tilemap) of the object
         map_collisions = []
         for i in map.tilemaps: # check if colliding with general sector 
             if self.rect.colliderect(i.rect):
                 map_collisions.append(i)
- 
-        self.ground = False
 
-        x_change = self.x - self.prev_x
-        y_change = self.y - self.prev_y
+        change_x = self.x - self.prev_x
+        change_y = self.y - self.prev_y
+
+        grounded = False
         for i in map_collisions:
-            for j in self.rect.collidelistall(i.collision_map):
-                collision = i.collision_map[j]
-                # floor collision
-                if x_change > 0:
-                    self.rect.right = collision.left
-                if x_change < 0: 
-                    self.rect.left = collision.right
-                if y_change > 0: 
-                    self.rect.bottom = collision.top
-                    self.ground = True
-                if y_change < 0: 
-                    self.rect.top = collision.bottom
-                self.x = self.rect.centerx
-                self.y = self.rect.centery
+            for collision in i.collision_map:
+                self.x -= change_x
+                self.update_center()
+                # vertical collisions
+                if (self.rect.right > collision.left + 1 or self.rect.left < collision.right - 1) \
+                and (self.rect.left < collision.right and self.rect.right > collision.left):
+                    # ceiling collisions
+                    while self.rect.colliderect(collision) \
+                    and self.y > collision.bottom \
+                    and self.rect.top < collision.bottom:
+                        self.y += 1
+                        self.update_center()
 
-        # find collision map of individual collided maps
+                    # floor collisions
+                    if self.rect.colliderect(collision) \
+                    and self.y < collision.top \
+                    and (collision.top <= self.rect.bottom + 1):
+                        # push upwards if not on ground
+                        while (collision.top < self.rect.bottom):
+                            self.y -= 1
+                            self.update_center()
+                        # else on ground
+                        self.vel_y = 0
+                        grounded = True
+                    elif self.rect.bottom == collision.top:
+                        self.vel_y = 0
+                        grounded = True
+
+                self.x += change_x
+                self.update_center()
+                
+                # wall collisions
+                self.y -= change_y
+                self.update_center()
+                dir_sign = math.copysign(1, collision.centerx - self.x)
+                if dir_sign == math.copysign(1, change_x):
+                    if self.rect.bottom <= collision.bottom or self.rect.top >= collision.top:
+                        while self.rect.colliderect(collision):
+                            self.x -= dir_sign
+                            self.update_center()
+                self.y += change_y
+                self.update_center()
+        print(grounded)
+        self.ground = grounded
 
     def render(self, surface, camera):
         super().render(surface, camera)
