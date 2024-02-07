@@ -22,9 +22,9 @@ class Tilemap(gameobject.GameObject):
     def __init__(self, x=0, y=0, tilemap_width=16, tilemap_height=16):
         self.x = x
         self.y = y
-        self.collision_map = []
         self.surface = pygame.Surface(size=(globalvar.TILE_SIZE * tilemap_width, globalvar.TILE_SIZE * tilemap_height))
         # get current rectangle for total tilemap collision
+        self.collision_map = []
         self.rect = self.surface.get_rect()
         self.rect.x += self.x
         self.rect.y += self.y
@@ -32,6 +32,8 @@ class Tilemap(gameobject.GameObject):
     def render(self, surface, camera):
         super().render(surface, camera)
         surface.blit(self.surface, (math.floor(self.x) - self.camera_x, math.floor(self.y) - self.camera_y))
+        # for i in self.collision_map:
+        #     pygame.draw.rect(surface, (255, 255, 255), i)
     pass
 
 # The map class creates the current loaded map
@@ -69,6 +71,7 @@ class Map(gameobject.GameObject):
                     index = 0
                     try:
                         index = int(cur_tile) - 1
+                        cur_tilemap.collision_map.append(pygame.Rect(cur_tilemap.x + (size_i * globalvar.TILE_SIZE), cur_tilemap.y + (j * globalvar.TILE_SIZE), globalvar.TILE_SIZE, globalvar.TILE_SIZE))
                         cur_tilemap.surface.blit(tileset.tiles[index], (size_i * globalvar.TILE_SIZE, j * globalvar.TILE_SIZE))
                     except ValueError:
                         # create object instead if not value
@@ -77,9 +80,6 @@ class Map(gameobject.GameObject):
             i += 1
             if size_i > size_limit - 1 or i == tilemap_width - 1: 
                 size_i = 0
-        # create masks for tilemaps
-        for i in self.tilemaps:
-            i.mask = pygame.mask.from_surface(i.surface)
 
     def render(self, surf, camera):
         super().render(surf, camera)

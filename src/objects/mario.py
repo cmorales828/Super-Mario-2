@@ -25,5 +25,7 @@ class Mario(collideable.Collideable):
 
     def render(self, surface, camera):
         super().render(surface, camera)
-        return
+        surface.blit(self.sprite, ((self.x - self.size[0] / 2) - self.camera_x, (self.y - self.size[1] / 2) - self.camera_y))
+        if (self.ground):
+            pygame.draw.rect(surface, (255, 255, 255), self.rect)
     pass

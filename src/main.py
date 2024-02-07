@@ -11,7 +11,7 @@ import objects.mario as mario
 
 # Init pygame
 pygame.init()
-screen = pygame.display.set_mode((1280, 720))
+screen = pygame.display.set_mode((1280, 720), vsync = 1)
 f_screen = pygame.Surface(size=(screen.get_width() // 2, screen.get_height() // 2))
 pygame.display.set_caption("Cual Abogado")
 
@@ -34,6 +34,7 @@ while True:
     # handle updating objects
     for i in objects:
         if isinstance(i, collideable.Collideable):
+            i.physics_update()
             i.update(map, objects)
         else:
             i.update()
@@ -55,4 +56,5 @@ while True:
 
     # update surface
     pygame.display.update()
+    pygame.display.flip()
     clock.tick(fps)
