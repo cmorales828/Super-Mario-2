@@ -31,9 +31,12 @@ class Mario(collideable.Collideable):
 
         move = keys[pygame.K_RIGHT] - keys[pygame.K_LEFT]
         sign_of = math.copysign(1, move)
-        if abs(sign_of) > 0:
-            self.vel_x += move * self.acc
-            self.dir = sign_of
+        if abs(move) > 0:
+            if sign_of == math.copysign(1, self.vel_x):
+                self.vel_x += move * self.acc
+                self.dir = sign_of
+            else:
+                self.vel_x += move * self.accskid
         else: # decceleration
             self.vel_x = max(0, abs(self.vel_x) - self.deccel) * math.copysign(1, self.vel_x)
             if self.vel_x < self.deccel and self.vel_x > -self.deccel:
