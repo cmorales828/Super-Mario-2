@@ -82,5 +82,5 @@ class Mario(collideable.Collideable):
         super().render(surface, camera)
         cur_sprite_copy = self.current_sprite.get(self.image_index).copy()
         cur_sprite_copy = pygame.transform.flip(cur_sprite_copy, self.dir == -1, False)
-        surface.blit(cur_sprite_copy, ((self.x - self.size[0] / 2) - self.camera_x, (self.y - self.size[1] / 2) - self.camera_y))
+        surface.blit(cur_sprite_copy, ((self.x - self.size[0] / 2) - self.camera_x, ((self.y - 1) - self.size[1] / 2) - self.camera_y))
     pass

@@ -66,6 +66,7 @@ class Collideable(gameobject.GameObject):
                     and self.y > collision.bottom \
                     and self.rect.top < collision.bottom:
                         self.y += 1
+                        self.vel_y = 0
                         self.update_center()
 
                     # floor collisions
