@@ -6,11 +6,14 @@ class Collideable(gameobject.GameObject):
     def __init__(self, x, y):
         super().__init__(x, y)
         # collision values
-        self.gravity = 0.1
+        self.gravity = 0
         self.ground = False
         self.vel_x = 0
         self.vel_y = 0
         self.dir = 1
+
+        self.prev_x = x
+        self.prev_y = y
 
         # other values
         self.size = (globalvar.TILE_SIZE, globalvar.TILE_SIZE)
@@ -21,6 +24,8 @@ class Collideable(gameobject.GameObject):
         self.rect.center = (self.x, self.y)
 
     def physics_update(self):
+        self.prev_x = self.x
+        self.prev_y = self.y
         if not self.ground:
             self.vel_y += self.gravity
     
@@ -39,17 +44,24 @@ class Collideable(gameobject.GameObject):
                 map_collisions.append(i)
  
         self.ground = False
+
+        x_change = self.x - self.prev_x
+        y_change = self.y - self.prev_y
         for i in map_collisions:
             for j in self.rect.collidelistall(i.collision_map):
                 collision = i.collision_map[j]
                 # floor collision
-                if collision.top <= self.rect.bottom:
+                if x_change > 0:
+                    self.rect.right = collision.left
+                if x_change < 0: 
+                    self.rect.left = collision.right
+                if y_change > 0: 
+                    self.rect.bottom = collision.top
                     self.ground = True
-                    while collision.top < self.rect.bottom:
-                        self.y -= 1
-                        self.update_center()
-
-                self.rect.bottom -= 2
+                if y_change < 0: 
+                    self.rect.top = collision.bottom
+                self.x = self.rect.centerx
+                self.y = self.rect.centery
 
         # find collision map of individual collided maps
 
