@@ -6,3 +6,5 @@ Thats gas
 
 ya; im currently working on collisions and stuff but eventually everything will go under a collision parent (collideable) 
 so making enemies should be easy for you and austin hopefully? We'll see if it's any better in practice
+
+P.S. These people are fake and im talking to myself
