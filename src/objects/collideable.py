@@ -12,7 +12,7 @@ class Collideable(gameobject.GameObject):
 
         self.offset_x = 0
         self.offset_y = 0
-        
+
         self.vel_x = 0
         self.vel_y = 0
         self.dir = 1
@@ -93,6 +93,7 @@ class Collideable(gameobject.GameObject):
                 if dir_sign == math.copysign(1, change_x):
                     if self.rect.bottom <= collision.bottom or self.rect.top >= collision.top:
                         while self.rect.colliderect(collision):
+                            self.vel_x = 0
                             self.x -= dir_sign
                             self.update_center()
                 self.y += change_y

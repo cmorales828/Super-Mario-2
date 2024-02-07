@@ -14,6 +14,7 @@ class Tileset:
             for y in range(self.rect.height // height):
                 temp_size = (width, height)
                 tile = pygame.Surface(temp_size)
+                tile.set_colorkey((0, 0, 0))
                 tile.blit(self.image, (0, 0), (x * width, y * height, *temp_size))
                 self.tiles.append(tile)
     
