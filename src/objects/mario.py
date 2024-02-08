@@ -118,18 +118,17 @@ class Mario(Player):
         self.rect = self.standard_rect if not self.crouching else self.crouch_rect
         self.offset_y = 8 if self.rect == self.standard_rect else 16
         super().update(map, objects)
-        print(self.rect)
+        # print(self.rect)
 
-        if self.ground \
-        and not self.jumped \
-        and keys[pygame.K_SPACE]:
-            self.ground = False
-            self.vel_y = -(self.jumpstr + (abs(self.vel_x) / 7.5))
-            self.jumping = 1
-            self.jumped = True
-        elif self.jumped and not keys[pygame.K_SPACE]:
-            self.jumped = False
-
+        if self.ground:
+            if not self.jumped \
+            and keys[pygame.K_SPACE]:
+                self.ground = False
+                self.vel_y = -(self.jumpstr + (abs(self.vel_x) / 7.5))
+                self.jumping = 1
+                self.jumped = True
+            elif self.jumped and not keys[pygame.K_SPACE]:
+                self.jumped = False
         self.variable_jumping()
 
         # animation control

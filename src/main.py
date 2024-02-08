@@ -11,8 +11,12 @@ import objects.mario as mario
 
 # Init pygame
 pygame.init()
-screen = pygame.display.set_mode((1280, 720), vsync = 0)
-f_screen = pygame.Surface(size=(screen.get_width() // 2, screen.get_height() // 2))
+
+globalvar.ZOOM = 3
+alt_res = (256, 224)
+resolution = (1280, 720)
+screen = pygame.display.set_mode(resolution, vsync = 0)
+f_screen = pygame.Surface(size=(screen.get_width() // globalvar.ZOOM, screen.get_height() // globalvar.ZOOM))
 pygame.display.set_caption("Cual Abogado")
 
 clock = pygame.time.Clock()
@@ -28,6 +32,7 @@ for_deletion = []
 
 # Instantiate the game loop
 while True:
+    pygame.display.set_caption("Cual Abogado | {:d} FPS".format(int(clock.get_fps())))
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
             pygame.quit()
@@ -52,7 +57,7 @@ while True:
         for_deletion.clear()
 
     # update camera separately
-    game_camera.update(f_screen)
+    game_camera.update(screen)
 
     # clear screen
     f_screen.fill((148, 148, 255))
