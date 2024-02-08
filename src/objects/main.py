@@ -2,12 +2,12 @@ import pygame
 import sys
 import math
 
-import src.globalvar as globalvar
-import src.map_parser as map_parser
-import src.objects.collideable as collideable
+import globalvar
+import map_parser
+import objects.collideable as collideable
 
-import src.objects.camera as camera
-import src.objects.mario as mario
+import objects.camera as camera
+import objects.mario as mario
 
 # Init pygame
 pygame.init()
