@@ -28,6 +28,9 @@ class Collideable(gameobject.GameObject):
     def update_center(self):
         self.rect.center = (self.x + self.offset_x, self.y + self.offset_y)
 
+    def bump_wall(self, wall):
+        self.vel_x = 0
+
     def physics_update(self):
         self.prev_x = self.x
         self.prev_y = self.y
@@ -59,7 +62,7 @@ class Collideable(gameobject.GameObject):
                 self.x -= change_x
                 self.update_center()
                 # vertical collisions
-                if (self.rect.right > collision.left + 1 or self.rect.left < collision.right - 1) \
+                if (self.rect.right > collision.left or self.rect.left < collision.right) \
                 and (self.rect.left < collision.right and self.rect.right > collision.left):
                     # ceiling collisions
                     while self.rect.colliderect(collision) \
@@ -92,9 +95,9 @@ class Collideable(gameobject.GameObject):
                 self.update_center()
                 dir_sign = math.copysign(1, collision.centerx - self.x)
                 if dir_sign == math.copysign(1, change_x):
-                    if self.rect.bottom <= collision.bottom or self.rect.top >= collision.top:
+                    if self.rect.colliderect(collision):
                         while self.rect.colliderect(collision):
-                            self.vel_x = 0
+                            self.bump_wall(collision)
                             self.x -= dir_sign
                             self.update_center()
                 self.y += change_y

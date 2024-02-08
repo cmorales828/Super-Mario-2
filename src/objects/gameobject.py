@@ -1,5 +1,5 @@
 import pygame
-
+import math
 class GameObject:
     def __init__(self, x, y):
         self.x = x
@@ -14,8 +14,8 @@ class GameObject:
     def render(self, surface, camera):
         # do camera calculations
         if camera != -1:
-            self.camera_x = camera.x
-            self.camera_y = camera.y
+            self.camera_x = math.floor(camera.x)
+            self.camera_y = math.floor(camera.y)
         return
     
 def create_object(x, y):
