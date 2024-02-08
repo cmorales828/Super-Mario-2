@@ -37,7 +37,8 @@ class Collideable(gameobject.GameObject):
         The "collide" functions allow an interface to the actual collision detection, 
         whereas the bump functions allow access to what happens when the collision is actually made
     '''
-    def wall_collide(self, collision, raw_object):
+    def wall_collide(self, gameobject):
+        collision = gameobject.rect
         change_x = self.x - self.prev_x
         dir_sign = math.copysign(1, collision.centerx - self.x)
         if dir_sign == math.copysign(1, change_x):
@@ -47,7 +48,8 @@ class Collideable(gameobject.GameObject):
                     self.x -= dir_sign
                     self.update_center()
     
-    def floor_collide(self, collision, raw_object):
+    def floor_collide(self, gameobject):
+        collision = gameobject.rect
         # floor collisions
         if self.rect.colliderect(collision) \
         and self.y < collision.top \
@@ -64,7 +66,8 @@ class Collideable(gameobject.GameObject):
             return True
         return False
     
-    def ceiling_collide(self, collision, raw_object):
+    def ceiling_collide(self, gameobject):
+        collision = gameobject.rect
         while self.rect.colliderect(collision) \
         and self.y + self.offset_y > collision.bottom \
         and self.rect.top < collision.bottom:
@@ -101,52 +104,44 @@ class Collideable(gameobject.GameObject):
         self.update_center()
 
         # find the sector (tilemap) of the object
-        map_collisions = []
+        all_collisions = []
         for i in map.tilemaps: # check if colliding with general sector 
             if self.rect.colliderect(i.rect):
                 for collision in i.collision_map:
-                    map_collisions.append(collision)
+                    all_collisions.append(collision)
         # to avoid doing a typecast we store these in an alternate array because FUCK typecasting god damn it its so fucking expensive
-        object_collisions = []
         for i in objects:
             if i != self and isinstance(i, Collideable):
-                object_collisions.append(i) # append the raw object
-        all_collisions = (map_collisions, object_collisions)
+                all_collisions.append(i) # append the raw object
 
         change_x = self.x - self.prev_x
         change_y = self.y - self.prev_y
 
         self.ground = False
-        for collision_attempt in range(len(all_collisions)):
-            for i in all_collisions[collision_attempt]:
-                raw_object = i # set the raw object to this stupid thing
-                collision = raw_object # assume this is a case where they are the same thing
-                if collision_attempt == 1:
-                    collision = raw_object.rect # JUST KIDDING ITS NOT
+        for collision in all_collisions:
+            self.x -= change_x
+            self.update_center()
+            # vertical collisions
+            if (self.rect.right > collision.rect.left or self.rect.left < collision.rect.right) \
+            and (self.rect.left < collision.rect.right and self.rect.right > collision.rect.left):
+                # ceiling collisions
+                self.ceiling_collide(collision)
 
-                self.x -= change_x
-                self.update_center()
-                # vertical collisions
-                if (self.rect.right > collision.left or self.rect.left < collision.right) \
-                and (self.rect.left < collision.right and self.rect.right > collision.left):
-                    # ceiling collisions
-                    self.ceiling_collide(collision, raw_object)
+                temp_ground = self.floor_collide(collision)
+                if temp_ground:
+                    self.ground = temp_ground
 
-                    temp_ground = self.floor_collide(collision, raw_object)
-                    if temp_ground:
-                        self.ground = temp_ground
+            self.x += change_x
+            self.update_center()
+            
+            # wall collisions
+            self.y -= change_y
+            self.update_center()
 
-                self.x += change_x
-                self.update_center()
-                
-                # wall collisions
-                self.y -= change_y
-                self.update_center()
+            self.wall_collide(collision)
 
-                self.wall_collide(collision, raw_object)
-
-                self.y += change_y
-                self.update_center()
+            self.y += change_y
+            self.update_center()
 
     def render(self, surface, camera):
         super().render(surface, camera)

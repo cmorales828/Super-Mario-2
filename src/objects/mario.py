@@ -34,34 +34,32 @@ class Mario(Player):
         # sprites
         self.super_mario = Tileset("player/big_mario.png", 16, 32)
         self.current_sprite = self.super_mario
-        self.standard_rect = self.current_sprite.get(self.image_index).get_rect()
+        self.standard_rect = pygame.Rect(0, 0, 16, 32)
         self.crouch_rect = pygame.Rect(0, 0, 16, 16)
 
         self.jumped = False
-    
-        print(isinstance(self, Player))
 
-    def wall_collide(self, collision, raw_object):
-        if not isinstance(raw_object, Enemy):
-            return super().wall_collide(collision, raw_object)
+    def wall_collide(self, gameobject):
+        if not gameobject.is_phaseable:
+            return super().wall_collide(gameobject)
         return False
         
-    def ceiling_collide(self, collision, raw_object):
-        if not isinstance(raw_object, Enemy):
-            return super().ceiling_collide(collision, raw_object)
+    def ceiling_collide(self, gameobject):
+        if not gameobject.is_phaseable:
+            return super().ceiling_collide(gameobject)
         return False
     
-    def floor_collide(self, collision, raw_object):
-        if not isinstance(raw_object, Enemy):
-            return super().floor_collide(collision, raw_object)
+    def floor_collide(self, gameobject):
+        if not gameobject.is_phaseable:
+            return super().floor_collide(gameobject)
         # ENEMY COLLISION HANDLING HERE
-        if self.vel_y > 0 and self.rect.bottom >= collision.top and not raw_object.dead:
+        if self.vel_y > 0 and self.rect.bottom >= gameobject.rect.top and not gameobject.dead:
             self.vel_y = -4.1
             self.y -= 1
             self.jumping = True
             self.jumped = True
             self.variable_jumping()
-            raw_object.kill()
+            gameobject.kill()
         return False
 
     def bump_floor(self, floor):
@@ -120,6 +118,7 @@ class Mario(Player):
         self.rect = self.standard_rect if not self.crouching else self.crouch_rect
         self.offset_y = 8 if self.rect == self.standard_rect else 16
         super().update(map, objects)
+        print(self.rect)
 
         if self.ground \
         and not self.jumped \

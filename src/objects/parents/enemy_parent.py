@@ -6,24 +6,24 @@ from objects.parents.player_parent import Player
 class Enemy(Collideable):
     def __init__(self, x, y):
         super().__init__(x, y)
-        self.dead = False
+        self.is_phaseable = True
 
-    def ceiling_collide(self, collision, raw_object):
-        if not isinstance(raw_object, Player) \
-        and (not (isinstance(raw_object, Enemy) and (raw_object.dead or self.dead))):
-            return super().ceiling_collide(collision, raw_object)
+    def ceiling_collide(self, gameobject):
+        if not gameobject.is_player \
+        and not (gameobject.is_phaseable and (gameobject.dead or self.dead)):
+            return super().ceiling_collide(gameobject)
         return False
 
-    def wall_collide(self, collision, raw_object):
-        if not isinstance(raw_object, Player) \
-        and (not (isinstance(raw_object, Enemy) and (raw_object.dead or self.dead))):
-            return super().wall_collide(collision, raw_object)
+    def wall_collide(self, gameobject):
+        if not gameobject.is_player \
+        and not (gameobject.is_phaseable and (gameobject.dead or self.dead)):
+            return super().wall_collide(gameobject)
         return False
     
-    def floor_collide(self, collision, raw_object):
-        if not isinstance(raw_object, Player) \
-        and (not (isinstance(raw_object, Enemy) and (raw_object.dead or self.dead))):
-            return super().floor_collide(collision, raw_object)
+    def floor_collide(self, gameobject):
+        if not gameobject.is_player \
+        and not (gameobject.is_phaseable and (gameobject.dead or self.dead)):
+            return super().floor_collide(gameobject)
         return False
     
     def kill(self):

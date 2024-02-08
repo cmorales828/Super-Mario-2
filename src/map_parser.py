@@ -61,7 +61,9 @@ class Map(gameobject.GameObject):
                     index = 0
                     try:
                         index = int(cur_tile) - 1
-                        cur_tilemap.collision_map.append(pygame.Rect(cur_tilemap.x + (size_i * globalvar.TILE_SIZE), cur_tilemap.y + (j * globalvar.TILE_SIZE), globalvar.TILE_SIZE, globalvar.TILE_SIZE))
+                        tile_rect = gameobject.GameObject(cur_tilemap.x + (size_i * globalvar.TILE_SIZE), cur_tilemap.y + (j * globalvar.TILE_SIZE))
+                        tile_rect.rect = pygame.Rect(cur_tilemap.x + (size_i * globalvar.TILE_SIZE), cur_tilemap.y + (j * globalvar.TILE_SIZE), globalvar.TILE_SIZE, globalvar.TILE_SIZE)
+                        cur_tilemap.collision_map.append(tile_rect)
                         cur_tilemap.surface.blit(tileset.tiles[index], (size_i * globalvar.TILE_SIZE, j * globalvar.TILE_SIZE))
                     except ValueError:
                         # create object instead if not value

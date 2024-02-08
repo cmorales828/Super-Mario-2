@@ -8,6 +8,12 @@ class GameObject:
         self.camera_x = 0
         self.camera_y = 0
 
+        # collision and globals
+        self.rect = -1
+        self.is_player = False
+        self.is_phaseable = False
+        self.dead = False
+
         self.delete = False
         self.draw = True
 
