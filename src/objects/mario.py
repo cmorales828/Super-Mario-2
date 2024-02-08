@@ -2,7 +2,7 @@ import globalvar
 import pygame
 import math
 import objects.collideable as collideable
-from map_parser import Tileset
+from objects.tileset import Tileset
 
 # Mario Object
 class Mario(collideable.Collideable):
@@ -34,6 +34,8 @@ class Mario(collideable.Collideable):
         self.current_sprite = self.super_mario
         self.standard_rect = self.current_sprite.get(self.image_index).get_rect()
         self.crouch_rect = pygame.Rect(0, 0, 16, 16)
+
+        self.jumped = False
     
         print(self.rect)
 
@@ -80,10 +82,14 @@ class Mario(collideable.Collideable):
         super().update(map, objects)
 
         if self.ground \
+        and not self.jumped \
         and keys[pygame.K_SPACE]:
             self.ground = False
             self.vel_y = -(self.jumpstr + (abs(self.vel_x) / 7.5))
             self.jumping = 1
+            self.jumped = True
+        elif self.jumped and not keys[pygame.K_SPACE]:
+            self.jumped = False
 
         if self.jumping >= 1 and not self.ground:
             if self.jumping == 1 and self.vel_y < -1:
@@ -99,7 +105,7 @@ class Mario(collideable.Collideable):
             self.image_index = 6
         else:
             if self.jumping == 0 or self.ground:
-                if self.skidding:
+                if self.skidding and abs(self.vel_x) > 0.01:
                     self.image_index = 4
                 else:
                     if abs(self.vel_x) > 0:
@@ -116,4 +122,5 @@ class Mario(collideable.Collideable):
         cur_sprite_copy = self.current_sprite.get(self.image_index).copy()
         cur_sprite_copy = pygame.transform.flip(cur_sprite_copy, self.dir == -1, False)
         surface.blit(cur_sprite_copy, ((self.x - self.size[0] / 2) - self.camera_x, (self.y - self.size[1] / 2) - self.camera_y))
+        # pygame.draw.rect(surface, (255, 255, 255), self.rect)
     pass

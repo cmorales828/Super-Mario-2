@@ -66,7 +66,7 @@ class Collideable(gameobject.GameObject):
                 and (self.rect.left < collision.right and self.rect.right > collision.left):
                     # ceiling collisions
                     while self.rect.colliderect(collision) \
-                    and self.y > collision.bottom \
+                    and self.y + self.offset_y > collision.bottom \
                     and self.rect.top < collision.bottom:
                         self.y += 1
                         self.vel_y = 0
