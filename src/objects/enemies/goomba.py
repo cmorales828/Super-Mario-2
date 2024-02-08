@@ -16,26 +16,32 @@ class Goomba(Enemy):
     
     def bump_wall(self, wall):
         self.vel_x = -self.vel_x
-        if isinstance(wall, Collideable):
-            wall.vel_x = -self.vel_x
         return 
     
+    def bump_floor(self, floor):
+        if abs(self.vel_y) > 1:
+            self.vel_y = -(self.vel_y / 2)
+            self.y -= 1
+        else:
+            return super().bump_floor(floor)
+
     def kill(self):
         self.dead = True
         self.vel_x = 0
-        self.gravity = 0
+        self.gravity = 0.1
 
     def update(self, map, objects):
         if not self.dead:
             self.image_index += 0.05
             if self.image_index > 2:
                 self.image_index = 0
-            return super().update(map, objects)
         else:
             self.image_index = 2
             self.destroy_timer -= 1
             if self.destroy_timer <= 0:
                 self.flag_for_deletion()
+
+        return super().update(map, objects)
     
     def render(self, surface, camera):
         super().render(surface, camera)

@@ -9,17 +9,20 @@ class Enemy(Collideable):
         self.dead = False
 
     def ceiling_collide(self, collision, raw_object):
-        if not isinstance(raw_object, Player):
+        if not isinstance(raw_object, Player) \
+        and (not (isinstance(raw_object, Enemy) and (raw_object.dead or self.dead))):
             return super().ceiling_collide(collision, raw_object)
         return False
 
     def wall_collide(self, collision, raw_object):
-        if not isinstance(raw_object, Player):
+        if not isinstance(raw_object, Player) \
+        and (not (isinstance(raw_object, Enemy) and (raw_object.dead or self.dead))):
             return super().wall_collide(collision, raw_object)
         return False
     
     def floor_collide(self, collision, raw_object):
-        if not isinstance(raw_object, Player):
+        if not isinstance(raw_object, Player) \
+        and (not (isinstance(raw_object, Enemy) and (raw_object.dead or self.dead))):
             return super().floor_collide(collision, raw_object)
         return False
     
