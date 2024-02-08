@@ -2,10 +2,12 @@ import globalvar
 import pygame
 import math
 import objects.collideable as collideable
+from objects.parents.enemy_parent import Enemy
+from objects.parents.player_parent import Player
 from objects.tileset import Tileset
 
 # Mario Object
-class Mario(collideable.Collideable):
+class Mario(Player):
     def __init__(self, x, y):
         super().__init__(x, y)
 
@@ -37,7 +39,45 @@ class Mario(collideable.Collideable):
 
         self.jumped = False
     
-        print(self.rect)
+        print(isinstance(self, Player))
+
+    def wall_collide(self, collision, raw_object):
+        if not isinstance(raw_object, Enemy):
+            return super().wall_collide(collision, raw_object)
+        return False
+        
+    def ceiling_collide(self, collision, raw_object):
+        if not isinstance(raw_object, Enemy):
+            return super().ceiling_collide(collision, raw_object)
+        return False
+    
+    def floor_collide(self, collision, raw_object):
+        if not isinstance(raw_object, Enemy):
+            return super().floor_collide(collision, raw_object)
+        # ENEMY COLLISION HANDLING HERE
+        if self.vel_y > 0 and self.rect.bottom >= collision.top and not raw_object.dead:
+            self.vel_y = -4.1
+            self.y -= 1
+            self.jumping = True
+            self.jumped = True
+            self.variable_jumping()
+            raw_object.kill()
+        return False
+
+    def bump_floor(self, floor):
+        # if isinstance(floor, Enemy):
+            # return
+        return super().bump_floor(floor)
+
+    def variable_jumping(self):
+        if self.jumping >= 1 and not self.ground:
+            if self.jumping == 1 and self.vel_y < -1:
+                self.jumping = (not pygame.key.get_pressed()[pygame.K_SPACE]) + 1
+                self.gravity = self.gravity_alt
+            else:
+                self.jumping = 2
+                self.gravity = self.gravity_base
+        else: self.jumping = 0
 
     def update(self, map, objects):
         keys = pygame.key.get_pressed()
@@ -91,14 +131,7 @@ class Mario(collideable.Collideable):
         elif self.jumped and not keys[pygame.K_SPACE]:
             self.jumped = False
 
-        if self.jumping >= 1 and not self.ground:
-            if self.jumping == 1 and self.vel_y < -1:
-                self.jumping = (not keys[pygame.K_SPACE]) + 1
-                self.gravity = self.gravity_alt
-            else:
-                self.jumping = 2
-                self.gravity = self.gravity_base
-        else: self.jumping = 0
+        self.variable_jumping()
 
         # animation control
         if self.crouching:

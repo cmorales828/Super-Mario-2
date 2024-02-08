@@ -24,6 +24,8 @@ game_camera.following = mario_object # Set the following object to mario
 objects = [mario_object] # Declare all objects (will most likely add objects from map afterwards)
 map = map_parser.Map(objects) # The map should not update and is separate from everything else
 
+for_deletion = []
+
 # Instantiate the game loop
 while True:
     for event in pygame.event.get():
@@ -38,6 +40,17 @@ while True:
             i.update(map, objects)
         else:
             i.update()
+        
+        # handle deletion
+        if i.delete:
+            for_deletion.append(i)
+
+    # handle deletion pt. 2
+    if len(for_deletion) > 0:
+        for i in for_deletion:
+            objects.remove(i)
+        for_deletion.clear()
+
     # update camera separately
     game_camera.update(f_screen)
 
@@ -47,7 +60,8 @@ while True:
     # Render map below everything else
     map.render(f_screen, game_camera)
     for i in objects: # Render objects
-        i.render(f_screen, game_camera)
+        if i.draw:
+            i.render(f_screen, game_camera)
         
     # psuedosurface stuff (displaying at zoomed size)
     f_screen = pygame.transform.scale_by(f_screen, globalvar.ZOOM)

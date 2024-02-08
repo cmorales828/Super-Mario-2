@@ -52,7 +52,7 @@ class Map(gameobject.GameObject):
         cur_tilemap = -1
         while i < tilemap_width:
             if size_i == 0:
-                cur_tilemap = Tilemap(i * globalvar.TILE_SIZE, 144, size_limit, tilemap_height)
+                cur_tilemap = Tilemap(i * globalvar.TILE_SIZE, 0, size_limit, tilemap_height)
                 self.tilemaps.append(cur_tilemap)
             for j in range(tilemap_height):
                 cur_tile = tilemap_array[i][j]

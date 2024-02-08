@@ -8,6 +8,9 @@ class GameObject:
         self.camera_x = 0
         self.camera_y = 0
 
+        self.delete = False
+        self.draw = True
+
     def update(self):
         return
 

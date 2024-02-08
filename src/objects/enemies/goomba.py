@@ -1,5 +1,6 @@
 import math
-from objects.enemies.enemy_parent import Enemy
+from objects.collideable import Collideable
+from objects.parents.enemy_parent import Enemy
 from objects.tileset import Tileset
 
 class Goomba(Enemy):
@@ -11,17 +12,30 @@ class Goomba(Enemy):
         self.vel_x = -0.5
         self.image_index = 0
         self.gravity = 0.1
+        self.destroy_timer = 120
     
     def bump_wall(self, wall):
         self.vel_x = -self.vel_x
+        if isinstance(wall, Collideable):
+            wall.vel_x = -self.vel_x
         return 
+    
+    def kill(self):
+        self.dead = True
+        self.vel_x = 0
+        self.gravity = 0
 
     def update(self, map, objects):
-        self.image_index += 0.05
-        if self.image_index > 2:
-            self.image_index = 0
-
-        return super().update(map, objects)
+        if not self.dead:
+            self.image_index += 0.05
+            if self.image_index > 2:
+                self.image_index = 0
+            return super().update(map, objects)
+        else:
+            self.image_index = 2
+            self.destroy_timer -= 1
+            if self.destroy_timer <= 0:
+                self.flag_for_deletion()
     
     def render(self, surface, camera):
         super().render(surface, camera)
