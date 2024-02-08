@@ -53,7 +53,9 @@ class Mario(Player):
         if not gameobject.is_phaseable:
             return super().floor_collide(gameobject)
         # ENEMY COLLISION HANDLING HERE
-        if self.vel_y > 0 and self.rect.bottom >= gameobject.rect.top and not gameobject.dead:
+        if self.rect.colliderect(gameobject.rect) and self.vel_y > 0 \
+        and (self.rect.bottom >= gameobject.rect.top \
+        and self.rect.bottom <= gameobject.rect.top + 4) and not gameobject.dead:
             self.vel_y = -4.1
             self.y -= 1
             self.jumping = True

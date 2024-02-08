@@ -7,8 +7,7 @@ class Goomba(Enemy):
     def __init__(self, x, y):
         super().__init__(x, y)
 
-        self.super_mario = Tileset("enemies/goomba.png", 16, 16)
-        self.current_sprite = self.super_mario
+        self.current_sprite = Tileset("enemies/goomba.png", 16, 16)
         self.vel_x = -0.5
         self.image_index = 0
         self.gravity = 0.1
@@ -40,10 +39,10 @@ class Goomba(Enemy):
             self.destroy_timer -= 1
             if self.destroy_timer <= 0:
                 self.flag_for_deletion()
-
         return super().update(map, objects)
     
     def render(self, surface, camera):
         super().render(surface, camera)
-        surface.blit(self.current_sprite.get(self.image_index).copy(), (math.floor(self.x - self.size[0] / 2) - self.camera_x, math.floor(self.y - self.size[1] / 2) - self.camera_y))
+        if self.current_sprite != -1:
+            surface.blit(self.current_sprite.get(self.image_index).copy(), (math.floor(self.x - self.size[0] / 2) - self.camera_x, math.floor(self.y - self.size[1] / 2) - self.camera_y))
     pass
