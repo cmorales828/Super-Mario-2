@@ -26,7 +26,7 @@ fps = 60
 mario_object = mario.Mario(64, 64) # The mario object is declared prior to be set as following for the camera
 game_camera = camera.Camera(0, 0) # Create the camera as it's an object that must be updated after every other
 game_camera.following = mario_object # Set the following object to mario
-objects = [mario_object, Jerma(128 + 16, 32)] # Declare all objects (will most likely add objects from map afterwards)
+objects = [mario_object] # Declare all objects (will most likely add objects from map afterwards)
 map = map_parser.Map(objects) # The map should not update and is separate from everything else
 
 for_deletion = []
@@ -68,6 +68,7 @@ while True:
     for i in objects: # Render objects
         if i.draw:
             i.render(f_screen, game_camera)
+    mario_object.render(f_screen, game_camera)
         
     # psuedosurface stuff (displaying at zoomed size)
     f_screen = pygame.transform.scale_by(f_screen, globalvar.ZOOM)
