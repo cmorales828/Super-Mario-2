@@ -31,9 +31,13 @@ class Mario(Player):
         self.jumping = 0
         self.skidding = False
         self.crouching = False
+        self.dead = False
         # sprites
+        self.small_mario = Tileset("player/small_mario.png", 16, 16)
+        self.small_mario.offset = (0, 16)
         self.super_mario = Tileset("player/big_mario.png", 16, 32)
-        self.current_sprite = self.super_mario
+        #
+        self.current_sprite = self.small_mario
         self.standard_rect = pygame.Rect(0, 0, 16, 32)
         self.crouch_rect = pygame.Rect(0, 0, 16, 16)
 
@@ -84,11 +88,13 @@ class Mario(Player):
         keys_pressed = pygame.key.get_just_pressed()
 
         # crouching 
-        if self.ground:
+        if self.ground and self.current_sprite != self.small_mario:
             if keys[pygame.K_s]:
                 self.crouching = True
             else:
                 self.crouching = False
+        elif self.current_sprite == self.small_mario:
+            self.crouching = False
 
         move = keys[pygame.K_d] - keys[pygame.K_a]
         sign_of = math.copysign(1, move)
@@ -117,7 +123,7 @@ class Mario(Player):
             self.vel_x = max(-self.max_vel_x, min(self.vel_x, self.max_vel_x))
 
         # get the current sprite hitbox
-        self.rect = self.standard_rect if not self.crouching else self.crouch_rect
+        self.rect = self.standard_rect if ((not self.crouching) and (self.current_sprite != self.small_mario)) else self.crouch_rect
         self.offset_y = 8 if self.rect == self.standard_rect else 16
         super().update(map, objects)
         # print(self.rect)
@@ -134,7 +140,7 @@ class Mario(Player):
         self.variable_jumping()
 
         # animation control
-        if self.crouching:
+        if self.crouching or self.dead:
             self.image_index = 6
         else:
             if self.jumping == 0 or self.ground:
@@ -152,8 +158,6 @@ class Mario(Player):
 
     def render(self, surface, camera):
         super().render(surface, camera)
-        cur_sprite_copy = self.current_sprite.get(self.image_index).copy()
-        cur_sprite_copy = pygame.transform.flip(cur_sprite_copy, self.dir == -1, False)
-        surface.blit(cur_sprite_copy, ((self.x - self.size[0] / 2) - self.camera_x, (self.y - self.size[1] / 2) - self.camera_y))
+        self.current_sprite.draw_self(surface, self.image_index, ((self.x - self.size[0] / 2) - self.camera_x, (self.y - self.size[1] / 2) - self.camera_y), self.dir == -1)
         # pygame.draw.rect(surface, (255, 255, 255), self.rect)
     pass
