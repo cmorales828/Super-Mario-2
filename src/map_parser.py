@@ -1,21 +1,10 @@
 import pygame
 import math
+from objects.enemies.goomba import Goomba
+from objects.enemies.jerma_follower import Jerma
 import objects.gameobject as gameobject
 import globalvar
-
-# Class for tilesets, that contain all tile information
-class Tileset:
-    def __init__(self, file_name):
-        self.image = pygame.image.load(globalvar.GLOBAL_PATH + file_name)
-        self.rect = self.image.get_rect()
-        # load tileset
-        self.tiles = []
-        for x in range(self.rect.width // globalvar.TILE_SIZE):
-            for y in range(self.rect.height // globalvar.TILE_SIZE):
-                temp_size = (globalvar.TILE_SIZE, globalvar.TILE_SIZE)
-                tile = pygame.Surface(temp_size)
-                tile.blit(self.image, (0, 0), (x * globalvar.TILE_SIZE, y * globalvar.TILE_SIZE, *temp_size))
-                self.tiles.append(tile)
+from objects.tileset import Tileset
 
 # Tilemaps are subdivisions of maps that are 16 x 16, containing that many tiles within them
 class Tilemap(gameobject.GameObject): 
@@ -23,22 +12,24 @@ class Tilemap(gameobject.GameObject):
         self.x = x
         self.y = y
         self.surface = pygame.Surface(size=(globalvar.TILE_SIZE * tilemap_width, globalvar.TILE_SIZE * tilemap_height))
+        self.surface.fill(globalvar.COLOR_MASK)
+        self.surface.set_colorkey(globalvar.COLOR_MASK)
         # get current rectangle for total tilemap collision
         self.collision_map = []
         self.rect = self.surface.get_rect()
+        self.rect = pygame.Rect(-(globalvar.TILE_SIZE / 2), -(globalvar.TILE_SIZE / 2), self.rect.width + globalvar.TILE_SIZE, self.rect.height + globalvar.TILE_SIZE)
+
         self.rect.x += self.x
         self.rect.y += self.y
 
     def render(self, surface, camera):
         super().render(surface, camera)
-        surface.blit(self.surface, (math.floor(self.x) - self.camera_x, math.floor(self.y) - self.camera_y))
-        # for i in self.collision_map:
-        #     pygame.draw.rect(surface, (255, 255, 255), i)
+        surface.blit(self.surface, ((self.x - self.camera_x), (self.y - self.camera_y)))
     pass
 
 # The map class creates the current loaded map
 class Map(gameobject.GameObject):
-    def __init__(self, path="0.txt"):
+    def __init__(self, objects, path="0.txt"):
         f = open(globalvar.MAP_PATH + path, "r")
         # get the information from the txt file (current format for maps)
         temp_array = f.read()
@@ -62,7 +53,7 @@ class Map(gameobject.GameObject):
         cur_tilemap = -1
         while i < tilemap_width:
             if size_i == 0:
-                cur_tilemap = Tilemap(i * globalvar.TILE_SIZE, 144, size_limit, tilemap_height)
+                cur_tilemap = Tilemap(i * globalvar.TILE_SIZE, 0, size_limit, tilemap_height)
                 self.tilemaps.append(cur_tilemap)
             for j in range(tilemap_height):
                 cur_tile = tilemap_array[i][j]
@@ -71,11 +62,18 @@ class Map(gameobject.GameObject):
                     index = 0
                     try:
                         index = int(cur_tile) - 1
-                        cur_tilemap.collision_map.append(pygame.Rect(cur_tilemap.x + (size_i * globalvar.TILE_SIZE), cur_tilemap.y + (j * globalvar.TILE_SIZE), globalvar.TILE_SIZE, globalvar.TILE_SIZE))
+                        tile_rect = gameobject.GameObject(cur_tilemap.x + (size_i * globalvar.TILE_SIZE), cur_tilemap.y + (j * globalvar.TILE_SIZE))
+                        tile_rect.rect = pygame.Rect(cur_tilemap.x + (size_i * globalvar.TILE_SIZE), cur_tilemap.y + (j * globalvar.TILE_SIZE), globalvar.TILE_SIZE, globalvar.TILE_SIZE)
+                        cur_tilemap.collision_map.append(tile_rect)
                         cur_tilemap.surface.blit(tileset.tiles[index], (size_i * globalvar.TILE_SIZE, j * globalvar.TILE_SIZE))
                     except ValueError:
                         # create object instead if not value
-                        continue
+                        match (cur_tile):
+                            case "g":
+                                objects.append(Goomba(cur_tilemap.x + (size_i * globalvar.TILE_SIZE), cur_tilemap.y + (j * globalvar.TILE_SIZE)))
+                            case "j":
+                                objects.append(Jerma(cur_tilemap.x + (size_i * globalvar.TILE_SIZE), cur_tilemap.y + (j * globalvar.TILE_SIZE)))
+
             size_i += 1
             i += 1
             if size_i > size_limit - 1 or i == tilemap_width - 1: 
