@@ -36,21 +36,47 @@ class Mario(Player):
         self.small_mario = Tileset("player/small_mario.png", 16, 16)
         self.small_mario.offset = (0, 16)
         self.super_mario = Tileset("player/big_mario.png", 16, 32)
+        self.life = 2
+        self.iframes = 0
         #
         self.current_sprite = self.small_mario
-        self.standard_rect = pygame.Rect(0, 0, 16, 32)
-        self.crouch_rect = pygame.Rect(0, 0, 16, 16)
+        self.standard_rect = pygame.Rect(0, 0, 14, 30)
+        self.crouch_rect = pygame.Rect(0, 0, 14, 14)
 
         self.jumped = False
 
     def wall_collide(self, gameobject):
         if not gameobject.is_phaseable:
             return super().wall_collide(gameobject)
+        elif gameobject.is_harmful and not gameobject.dead \
+        and self.rect.colliderect(gameobject.rect) \
+        and self.rect.bottom > gameobject.rect.centery:
+            self.damage()
         return False
+    
+    def damage(self):
+        if not self.dead and self.iframes <= 0:
+            self.life -= 1
+            if self.life > 0:
+                self.iframes = 120
+            else:
+                self.dead = True
+                self.ground = False
+                self.jumping = 0
+                self.vel_y = -3.5
+                self.vel_x = 0
+                self.gravity = 0.1
         
     def ceiling_collide(self, gameobject):
-        if not gameobject.is_phaseable:
+        if not gameobject.is_phaseable \
+        and not gameobject.is_block:
             return super().ceiling_collide(gameobject)
+        elif gameobject.is_block and self.rect.colliderect(gameobject.rect) \
+        and self.rect.top >= gameobject.rect.bottom - 4:
+            if gameobject.bump:
+                super().ceiling_collide(gameobject)
+            else:
+                self.bump_ceil(gameobject)
         return False
     
     def floor_collide(self, gameobject):
@@ -72,6 +98,14 @@ class Mario(Player):
         # if isinstance(floor, Enemy):
             # return
         return super().bump_floor(floor)
+    
+    def bump_ceil(self, ceiling):
+        if ceiling.is_block == True and not ceiling.bump:
+            ceiling.vel_y = -2
+            ceiling.bump = True
+            ceiling.physics_update()
+            self.y += 1
+        return super().bump_ceil(ceiling)
 
     def variable_jumping(self):
         if self.jumping >= 1 and not self.ground:
@@ -84,8 +118,10 @@ class Mario(Player):
         else: self.jumping = 0
 
     def update(self, map, objects):
+        if self.dead:
+            return
+
         keys = pygame.key.get_pressed()
-        keys_pressed = pygame.key.get_just_pressed()
 
         # crouching 
         if self.ground and self.current_sprite != self.small_mario:
@@ -123,8 +159,15 @@ class Mario(Player):
             self.vel_x = max(-self.max_vel_x, min(self.vel_x, self.max_vel_x))
 
         # get the current sprite hitbox
+        self.current_sprite = self.small_mario if self.life <= 1 else self.super_mario
+        # if you want to add custom states you can cross check powerups with sprite being super mario here
         self.rect = self.standard_rect if ((not self.crouching) and (self.current_sprite != self.small_mario)) else self.crouch_rect
         self.offset_y = 8 if self.rect == self.standard_rect else 16
+
+        # i frame decrease
+        if self.iframes > 0:
+            self.iframes -= 1
+
         super().update(map, objects)
         # print(self.rect)
 
@@ -158,6 +201,7 @@ class Mario(Player):
 
     def render(self, surface, camera):
         super().render(surface, camera)
-        self.current_sprite.draw_self(surface, self.image_index, ((self.x - self.size[0] / 2) - self.camera_x, (self.y - self.size[1] / 2) - self.camera_y), self.dir == -1)
+        if self.iframes % 2 == 0:
+            self.current_sprite.draw_self(surface, self.image_index, ((self.x - self.size[0] / 2) - self.camera_x, (self.y - self.size[1] / 2) - self.camera_y), self.dir == -1)
         # pygame.draw.rect(surface, (255, 255, 255), self.rect)
     pass

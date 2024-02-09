@@ -13,10 +13,12 @@ import objects.mario as mario
 # Init pygame
 pygame.init()
 
-globalvar.ZOOM = 3
+scale_res = 3
+globalvar.ZOOM = scale_res
 alt_res = (256, 224)
-resolution = (1280, 720)
-screen = pygame.display.set_mode(resolution, vsync = 0)
+modern_res = (420, 240)
+cur_res = alt_res
+screen = pygame.display.set_mode((cur_res[0] * scale_res, cur_res[1] * scale_res), vsync = 0)
 f_screen = pygame.Surface(size=(screen.get_width() // globalvar.ZOOM, screen.get_height() // globalvar.ZOOM))
 pygame.display.set_caption("Cual Abogado")
 
@@ -41,11 +43,8 @@ while True:
 
     # handle updating objects
     for i in objects:
-        if isinstance(i, collideable.Collideable):
-            i.physics_update()
-            i.update(map, objects)
-        else:
-            i.update()
+        i.physics_update()
+        i.update(map, objects)
         
         # handle deletion
         if i.delete:

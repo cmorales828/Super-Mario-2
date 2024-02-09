@@ -12,12 +12,18 @@ class GameObject:
         self.rect = -1
         self.is_player = False
         self.is_phaseable = False
+        self.is_collideable = False
+        self.is_harmful = False
+        self.is_block = False
         self.dead = False
 
         self.delete = False
         self.draw = True
 
-    def update(self):
+    def physics_update(self):
+        return
+
+    def update(self, map, objects):
         return
 
     def render(self, surface, camera):

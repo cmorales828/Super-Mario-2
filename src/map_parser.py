@@ -4,6 +4,7 @@ from objects.enemies.goomba import Goomba
 from objects.enemies.jerma_follower import Jerma
 import objects.gameobject as gameobject
 import globalvar
+from objects.parents.block_parent import Block
 from objects.tileset import Tileset
 
 # Tilemaps are subdivisions of maps that are 16 x 16, containing that many tiles within them
@@ -73,6 +74,8 @@ class Map(gameobject.GameObject):
                                 objects.append(Goomba(cur_tilemap.x + (size_i * globalvar.TILE_SIZE), cur_tilemap.y + (j * globalvar.TILE_SIZE)))
                             case "j":
                                 objects.append(Jerma(cur_tilemap.x + (size_i * globalvar.TILE_SIZE), cur_tilemap.y + (j * globalvar.TILE_SIZE)))
+                            case "b":
+                                objects.append(Block(cur_tilemap.x + ((size_i + 0.5) * globalvar.TILE_SIZE), cur_tilemap.y + ((j + 0.5) * globalvar.TILE_SIZE)))
 
             size_i += 1
             i += 1

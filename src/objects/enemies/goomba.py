@@ -15,6 +15,8 @@ class Goomba(Enemy):
     
     def bump_wall(self, wall):
         self.vel_x = -self.vel_x
+        if wall.is_collideable:
+            wall.vel_x = -wall.vel_x
         return 
     
     def bump_floor(self, floor):

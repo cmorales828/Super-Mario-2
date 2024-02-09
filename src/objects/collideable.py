@@ -9,6 +9,7 @@ class Collideable(gameobject.GameObject):
         # collision values
         self.gravity = 0
         self.ground = False
+        self.is_collideable = True
 
         self.offset_x = 0
         self.offset_y = 0
@@ -44,7 +45,7 @@ class Collideable(gameobject.GameObject):
         if dir_sign == math.copysign(1, change_x):
             if self.rect.colliderect(collision):
                 while self.rect.colliderect(collision):
-                    self.bump_wall(collision)
+                    self.bump_wall(gameobject)
                     self.x -= dir_sign
                     self.update_center()
     
@@ -59,10 +60,10 @@ class Collideable(gameobject.GameObject):
                 self.y -= 1
                 self.update_center()
             # else on ground
-            self.bump_floor(collision)
+            self.bump_floor(gameobject)
             return True
         elif self.rect.bottom == collision.top:
-            self.bump_floor(collision)
+            self.bump_floor(gameobject)
             return True
         return False
     
@@ -72,7 +73,7 @@ class Collideable(gameobject.GameObject):
         and self.y + self.offset_y > collision.bottom \
         and self.rect.top < collision.bottom:
             self.y += 1
-            self.bump_ceil(collision)
+            self.bump_ceil(gameobject)
             self.update_center()
 
     # Bump functions to allow you to bump into things you IDIOT
@@ -100,18 +101,19 @@ class Collideable(gameobject.GameObject):
 
     # UPDATE THE ACTUAL OBJECT
     def update(self, map, objects):
-        super().update()
+        super().update(map, objects)
         self.update_center()
 
         # find the sector (tilemap) of the object
         all_collisions = []
-        for i in map.tilemaps: # check if colliding with general sector 
-            if self.rect.colliderect(i.rect):
-                for collision in i.collision_map:
-                    all_collisions.append(collision)
+        if map != None:
+            for i in map.tilemaps: # check if colliding with general sector 
+                if self.rect.colliderect(i.rect):
+                    for collision in i.collision_map:
+                        all_collisions.append(collision)
         # to avoid doing a typecast we store these in an alternate array because FUCK typecasting god damn it its so fucking expensive
         for i in objects:
-            if i != self and isinstance(i, Collideable):
+            if i != self and i.is_collideable:
                 all_collisions.append(i) # append the raw object
 
         change_x = self.x - self.prev_x
