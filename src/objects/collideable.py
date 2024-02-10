@@ -106,14 +106,16 @@ class Collideable(gameobject.GameObject):
 
         # find the sector (tilemap) of the object
         all_collisions = []
-        if map != None:
+        if map is not None:
             for i in map.tilemaps: # check if colliding with general sector 
                 if self.rect.colliderect(i.rect):
                     for collision in i.collision_map:
                         all_collisions.append(collision)
         # to avoid doing a typecast we store these in an alternate array because FUCK typecasting god damn it its so fucking expensive
         for i in objects:
-            if i != self and i.is_collideable:
+            # compare or skip
+            if i != self and i.is_collideable \
+            and abs(i.x - self.x) < 32:
                 all_collisions.append(i) # append the raw object
 
         change_x = self.x - self.prev_x

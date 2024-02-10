@@ -1,5 +1,5 @@
 import math
-from objects.collideable import Collideable
+import sound_cache
 from objects.parents.enemy_parent import Enemy
 from objects.tileset import Tileset
 
@@ -28,6 +28,7 @@ class Goomba(Enemy):
 
     def kill(self):
         self.dead = True
+        sound_cache.STOMP.play()
         self.vel_x = 0
         self.gravity = 0.1
 

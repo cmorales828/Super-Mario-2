@@ -1,8 +1,6 @@
-import globalvar
+import sound_cache
 import pygame
 import math
-import objects.collideable as collideable
-from objects.parents.enemy_parent import Enemy
 from objects.parents.player_parent import Player
 from objects.tileset import Tileset
 
@@ -36,7 +34,7 @@ class Mario(Player):
         self.small_mario = Tileset("player/small_mario.png", 16, 16)
         self.small_mario.offset = (0, 16)
         self.super_mario = Tileset("player/big_mario.png", 16, 32)
-        self.life = 2
+        self.life = 100
         self.iframes = 0
         #
         self.current_sprite = self.small_mario
@@ -58,8 +56,11 @@ class Mario(Player):
         if not self.dead and self.iframes <= 0:
             self.life -= 1
             if self.life > 0:
+                sound_cache.HURT.play()
                 self.iframes = 120
             else:
+                sound_cache.DIE.play()
+                self.iframes = 30
                 self.dead = True
                 self.ground = False
                 self.jumping = 0
@@ -100,7 +101,7 @@ class Mario(Player):
         return super().bump_floor(floor)
     
     def bump_ceil(self, ceiling):
-        if ceiling.is_block == True and not ceiling.bump:
+        if ceiling.is_block and not ceiling.bump:
             ceiling.vel_y = -2
             ceiling.bump = True
             ceiling.physics_update()
@@ -115,9 +116,18 @@ class Mario(Player):
             else:
                 self.jumping = 2
                 self.gravity = self.gravity_base
-        else: self.jumping = 0
+        else: 
+            self.jumping = 0
+
+    def physics_update(self):
+        if not self.dead or (self.dead and self.iframes <= 0):
+            return super().physics_update()
 
     def update(self, map, objects):
+        # i frame decrease
+        if self.iframes > 0:
+            self.iframes -= 1
+
         if self.dead:
             return
 
@@ -164,16 +174,16 @@ class Mario(Player):
         self.rect = self.standard_rect if ((not self.crouching) and (self.current_sprite != self.small_mario)) else self.crouch_rect
         self.offset_y = 8 if self.rect == self.standard_rect else 16
 
-        # i frame decrease
-        if self.iframes > 0:
-            self.iframes -= 1
-
         super().update(map, objects)
         # print(self.rect)
 
         if self.ground:
             if not self.jumped \
             and keys[pygame.K_SPACE]:
+                if self.life < 1:
+                    sound_cache.JUMP.play()
+                else:
+                    sound_cache.JUMP_ALT.play()
                 self.ground = False
                 self.vel_y = -(self.jumpstr + (abs(self.vel_x) / 7.5))
                 self.jumping = 1
@@ -201,7 +211,7 @@ class Mario(Player):
 
     def render(self, surface, camera):
         super().render(surface, camera)
-        if self.iframes % 2 == 0:
+        if self.iframes % 2 == 0 or self.dead:
             self.current_sprite.draw_self(surface, self.image_index, ((self.x - self.size[0] / 2) - self.camera_x, (self.y - self.size[1] / 2) - self.camera_y), self.dir == -1)
         # pygame.draw.rect(surface, (255, 255, 255), self.rect)
     pass

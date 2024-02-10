@@ -59,7 +59,7 @@ class Map(gameobject.GameObject):
             for j in range(tilemap_height):
                 cur_tile = tilemap_array[i][j]
                 # If you wanted to add tiles/objects, this would be the place to do it
-                if not "0" in cur_tile and not " " in cur_tile:
+                if "0" not in cur_tile and " " not in cur_tile:
                     index = 0
                     try:
                         index = int(cur_tile) - 1
@@ -69,13 +69,14 @@ class Map(gameobject.GameObject):
                         cur_tilemap.surface.blit(tileset.tiles[index], (size_i * globalvar.TILE_SIZE, j * globalvar.TILE_SIZE))
                     except ValueError:
                         # create object instead if not value
+                        pos = (cur_tilemap.x + ((size_i + 0.5) * globalvar.TILE_SIZE), cur_tilemap.y + ((j + 0.5) * globalvar.TILE_SIZE))
                         match (cur_tile):
                             case "g":
-                                objects.append(Goomba(cur_tilemap.x + (size_i * globalvar.TILE_SIZE), cur_tilemap.y + (j * globalvar.TILE_SIZE)))
+                                objects.append(Goomba(pos[0], pos[1]))
                             case "j":
-                                objects.append(Jerma(cur_tilemap.x + (size_i * globalvar.TILE_SIZE), cur_tilemap.y + (j * globalvar.TILE_SIZE)))
+                                objects.append(Jerma(pos[0], pos[1]))
                             case "b":
-                                objects.append(Block(cur_tilemap.x + ((size_i + 0.5) * globalvar.TILE_SIZE), cur_tilemap.y + ((j + 0.5) * globalvar.TILE_SIZE)))
+                                objects.append(Block(pos[0], pos[1]))
 
             size_i += 1
             i += 1

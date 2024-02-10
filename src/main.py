@@ -4,10 +4,8 @@ import math
 
 import globalvar
 import map_parser
-import objects.collideable as collideable
 
 import objects.camera as camera
-from objects.enemies.jerma_follower import Jerma
 import objects.mario as mario
 
 # Init pygame
@@ -26,7 +24,7 @@ clock = pygame.time.Clock()
 fps = 60
 
 mario_object = mario.Mario(64, 64) # The mario object is declared prior to be set as following for the camera
-game_camera = camera.Camera(0, 0) # Create the camera as it's an object that must be updated after every other
+game_camera = camera.Camera(0, 0, screen) # Create the camera as it's an object that must be updated after every other
 game_camera.following = mario_object # Set the following object to mario
 objects = [mario_object] # Declare all objects (will most likely add objects from map afterwards)
 map = map_parser.Map(objects) # The map should not update and is separate from everything else
@@ -43,8 +41,11 @@ while True:
 
     # handle updating objects
     for i in objects:
-        i.physics_update()
-        i.update(map, objects)
+        # culling check
+        if i.x > game_camera.x - game_camera.width * 2 \
+        and i.x < game_camera.x + game_camera.width * 2: 
+            i.physics_update()
+            i.update(map, objects)
         
         # handle deletion
         if i.delete:
@@ -57,7 +58,7 @@ while True:
         for_deletion.clear()
 
     # update camera separately
-    game_camera.update(screen)
+    game_camera.update()
 
     # clear screen
     f_screen.fill((148, 148, 255))
